@@ -1,5 +1,6 @@
 package com.vinay.nagisdetty.review_microservice.review;
 
+import com.vinay.nagisdetty.review_microservice.review.messaging.ReviewmessageProducer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +11,12 @@ import java.util.List;
 @RequestMapping("/reviews")
 public class ReviewController {
     private ReviewService reviewService;
+    private ReviewmessageProducer reviewmessageProducer;
 
-    public ReviewController(ReviewService reviewService) {
+
+    public ReviewController(ReviewService reviewService,ReviewmessageProducer reviewmessageProducer) {
         this.reviewService = reviewService;
+        this.reviewmessageProducer = reviewmessageProducer;
     }
 
     @GetMapping
@@ -25,9 +29,11 @@ public class ReviewController {
     public ResponseEntity<String> addReview(@RequestParam Long companyId,
                                             @RequestBody Review review){
             boolean isReviewSaved = reviewService.addReview(companyId, review);
-            if (isReviewSaved)
+            if (isReviewSaved) {
+                reviewmessageProducer.send(review);
                 return new ResponseEntity<>("Review Added Successfully",
-                    HttpStatus.OK);
+                        HttpStatus.OK);
+            }
             else
                 return new ResponseEntity<>("Review Not Saved",
                         HttpStatus.NOT_FOUND);

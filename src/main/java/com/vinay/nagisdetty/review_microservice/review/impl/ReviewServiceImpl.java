@@ -5,6 +5,7 @@ package com.vinay.nagisdetty.review_microservice.review.impl;
 import com.vinay.nagisdetty.review_microservice.review.Review;
 import com.vinay.nagisdetty.review_microservice.review.ReviewRepository;
 import com.vinay.nagisdetty.review_microservice.review.ReviewService;
+import com.vinay.nagisdetty.review_microservice.review.messaging.ReviewmessageProducer;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,10 +13,12 @@ import java.util.List;
 @Service
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
+    private ReviewmessageProducer reviewmessageProducer;
 
-    public ReviewServiceImpl(ReviewRepository reviewRepository
+    public ReviewServiceImpl(ReviewRepository reviewRepository,ReviewmessageProducer reviewmessageProducer
                              ) {
         this.reviewRepository = reviewRepository;
+        this.reviewmessageProducer = reviewmessageProducer;
 
     }
 
